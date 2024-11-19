@@ -26,13 +26,22 @@ valid_proof(Prems, Goal, Proof) :-
     %last(Proof, Goal),
     check_steps(Prems, Goal, Proof, Proof).
 
-check_steps(_, Goal, [[_, Goal, _]], _).
+check_steps(_, Goal, [[_, Goal, _]], \+ assumption).
+
+
+check_steps(Prems, Goal, [Line|[]], Proof) :-
+    (checkPremise(Line, Prems) ;
+    checkRule(Line, Proof) ;
+    box(Prems, Line, Proof)),
+    Line == [_, Goal, _].
 
 check_steps(Prems, Goal, [Line|Rest], Proof) :-
     (checkPremise(Line, Prems) ;
     checkRule(Line, Proof) ;
     box(Prems, Line, Proof)),
     check_steps(Prems, Goal, Rest, Proof).
+
+
 
 % Premise rule
 checkPremise([_, X, premise], Prems) :-
@@ -88,8 +97,8 @@ checkRule([LineNum, X, orel(A, B, C, D, E)], Proof) :-
     member([A, or(U,V), _], Proof),
     member([[B, U, assumption]|Box], Proof),
     boxLast([[B,U,_]|Box], X, C),
-    member([[D, V, assumption]|Box], Proof),
-    boxLast([[D,V,_]|Box], X, E).
+    member([[D, V, assumption]|Box2], Proof),
+    boxLast([[D,V,_]|Box2], X, E).
 
 % Negation elimination
 checkRule([LineNum, cont, negel(A, B)], Proof) :-
@@ -102,14 +111,15 @@ checkRule([LineNum, _, negel(A)], Proof) :-
     checkLines(LineNum, A),
     member([A, cont, _], Proof).
 
-% double negation elimination negnegel
+% double negation introduction  negnegint
 checkRule([LineNum, neg(neg(X)), negnegint(A)], Proof) :-
     checkLines(LineNum, A),
     member([A,X,_], Proof).
 
+% double negation elimination negnegel
 checkRule([LineNum, X, negnegel(A)], Proof) :-
     checkLines(LineNum, A),
-    member([A, neg(neg(X))], Proof).
+    member([A, neg(neg(X)), _], Proof).
 
 % MT
 checkRule([LineNum, neg(X), mt(A,B)], Proof) :-
@@ -129,7 +139,7 @@ checkRule([LineNum, X, copy(A)], Proof) :-
     member([A, X, _], Proof).
 
 % LEM
-checkRule([_, or(X, neg(X)), lem]).
+checkRule([_, or(X, neg(X)), lem],_).
 
 
 checkLines(Num, A) :-
@@ -143,6 +153,8 @@ checkLines(Num, A, B, C, D, E) :-
     Num > C,
     Num > D,
     Num > E.
+box(_, [BoxStart|_], _) :-
+    BoxStart = [_,_,assumption].
 
 box(Prems, [BoxStart|BoxTail], Proof) :-
     BoxStart = [_ , _, assumption],
@@ -157,7 +169,7 @@ box(Prems, [BoxStart|BoxTail], Proof) :-
 %    formula_at(LineB, Ant, Proof).
 
 % Base case for checking last row of box
-boxLast([RowB, VarY, _], VarY, RowB).
+boxLast([[RowB, VarY, _]], VarY, RowB).
 
 boxLast([_|T], VarY, RowB) :-
     boxLast(T, VarY, RowB).
