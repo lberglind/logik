@@ -105,8 +105,8 @@ checkRule([LineNum, cont, negel(A, B)], Proof) :-
     member([A,X,_], Proof),
     member([B, neg(X), _], Proof).
 
-% Falsum elimination
-checkRule([LineNum, _, negel(A)], Proof) :-
+% Falsum elimination 
+checkRule([LineNum, _, contel(A)], Proof) :-
     checkLines(LineNum, A),
     member([A, cont, _], Proof).
 
