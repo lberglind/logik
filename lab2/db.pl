@@ -152,8 +152,9 @@ checkLines(Num, A, B, C, D, E) :-
     Num > C,
     Num > D,
     Num > E.
-box(_, [BoxStart|_], _) :-
-    BoxStart = [_,_,assumption].
+
+box(_, [Box], _) :-
+    Box = [_,_,assumption].
 
 box(Prems, [BoxStart|BoxTail], Proof) :-
     BoxStart = [_ , _, assumption],
