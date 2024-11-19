@@ -1,0 +1,28 @@
+uppgifterna 1, 2, 3, 4 skall lösas för godkänt betyg på labben!
+Den sista uppgiften ger inga extra poäng, men kanske någon insikt.
+De angivna poängtalen visar min bedömning av svårighetsgraden.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% uppgift 1 (4p)
+% unifiering
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Betrakta denna fråga till ett Prologsystem:
+
+?- T=f(a,Y,Z), T=f(X,X,b).
+
+Vilka bindningar presenteras som resultat?
+
+T = f(a, a, b),
+Y = X, X = a,
+Z = b.
+
+
+Ge en kortfattad förklaring till ditt svar!
+
+f(a,Y,Z) definierar att index 0 ska vara a men Y och Z är inte definierade än.
+f(X,X,b) definierar att index 3 är b samt att index 0 och 1 har samma värde.
+Eftersom den första delen av frågan redan definierat index 0 till a måste således index 1 också vara a.
+Därför blir T = f(a, a, b).
+
+
