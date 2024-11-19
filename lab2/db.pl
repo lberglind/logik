@@ -29,12 +29,13 @@ valid_proof(Prems, Goal, Proof) :-
 check_steps(_, Goal, [[_, Goal, _]], _).
 
 check_steps(Prems, Goal, [Line|Rest], Proof) :-
-    (checkRule(Line, Prems) ;
-    checkRule(Line, Proof)),
+    (checkPremise(Line, Prems) ;
+    checkRule(Line, Proof) ;
+    box(Prems, Line, Proof)),
     check_steps(Prems, Goal, Rest, Proof).
 
 % Premise rule
-checkRule([_, X, premise], Prems) :-
+checkPremise([_, X, premise], Prems) :-
     member(X, Prems).
 
 % And introduction rule
@@ -101,6 +102,34 @@ checkRule([LineNum, _, negel(A)], Proof) :-
     checkLines(LineNum, A),
     member([A, cont, _], Proof).
 
+% double negation elimination negnegel
+checkRule([LineNum, neg(neg(X)), negnegint(A)], Proof) :-
+    checkLines(LineNum, A),
+    member([A,X,_], Proof).
+
+checkRule([LineNum, X, negnegel(A)], Proof) :-
+    checkLines(LineNum, A),
+    member([A, neg(neg(X))], Proof).
+
+% MT
+checkRule([LineNum, neg(X), mt(A,B)], Proof) :-
+    checkLines(LineNum, A, B),
+    member([A, imp(X, Y), _], Proof),
+    member([B, neg(Y), _], Proof).
+
+% PBC
+checkRule([LineNum, X, pbc(A,B)], Proof) :-
+    checkLines(LineNum, A, B),
+    member([[A, neg(X), _]|Box], Proof),
+    boxLast([[A, neg(X), _]|Box], cont, B).
+
+% Copy
+checkRule([LineNum, X, copy(A)], Proof) :-
+    checkLine(LineNum, A),
+    member([A, X, _], Proof).
+
+% LEM
+checkRule([_, or(X, neg(X)), lem]).
 
 
 checkLines(Num, A) :-
@@ -114,6 +143,12 @@ checkLines(Num, A, B, C, D, E) :-
     Num > C,
     Num > D,
     Num > E.
+
+box(Prems, [BoxStart|BoxTail], Proof) :-
+    BoxStart = [_ , _, assumption],
+    append([BoxStart|BoxTail], Proof, ProofWBox),
+    check_steps(Prems, _, BoxTail, ProofWBox).
+
 
 
 
@@ -129,7 +164,7 @@ boxLast([_|T], VarY, RowB) :-
 
 % Traverse to last element and check if it is the same as Goal
 
-last([[_, Goal, _]], Goal).
-
-last([_|Rest], Goal) :-
-    last(Rest, Goal).
+%last([[_, Goal, _]], Goal).
+%
+%last([_|Rest], Goal) :-
+%    last(Rest, Goal).
