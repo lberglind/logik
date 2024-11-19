@@ -23,17 +23,16 @@ verify(InputFileName) :-
     valid_proof(Prems, Goal, Proof).
 
 valid_proof(Prems, Goal, Proof) :-
-    %last(Proof, Goal),
+    last(Proof, Goal),
     check_steps(Prems, Goal, Proof, Proof).
 
-check_steps(_, Goal, [[_, Goal, _]], \+ assumption).
+check_steps(_, _, [], _).
 
-
-check_steps(Prems, Goal, [Line|[]], Proof) :-
-    (checkPremise(Line, Prems) ;
-    checkRule(Line, Proof) ;
-    box(Prems, Line, Proof)),
-    Line == [_, Goal, _].
+%check_steps(Prems, Goal, [Line|[]], Proof) :-
+%    (checkPremise(Line, Prems) ;
+%    checkRule(Line, Proof) ;
+%    box(Prems, Line, Proof)),
+%    Line == [_, Goal, _].
 
 check_steps(Prems, Goal, [Line|Rest], Proof) :-
     (checkPremise(Line, Prems) ;
@@ -135,7 +134,7 @@ checkRule([LineNum, X, pbc(A,B)], Proof) :-
 
 % Copy
 checkRule([LineNum, X, copy(A)], Proof) :-
-    checkLine(LineNum, A),
+    checkLines(LineNum, A),
     member([A, X, _], Proof).
 
 % LEM
@@ -176,7 +175,8 @@ boxLast([_|T], VarY, RowB) :-
 
 % Traverse to last element and check if it is the same as Goal
 
-%last([[_, Goal, _]], Goal).
-%
-%last([_|Rest], Goal) :-
-%    last(Rest, Goal).
+last([[_, Goal, Rule]], Goal) :-
+    Rule \= assumption.
+
+last([_|Rest], Goal) :-
+    last(Rest, Goal).
