@@ -56,12 +56,12 @@ checkRule([LineNum, and(X, Y), andint(A, B)], Proof) :-
 
 % Or introduction 1, orint1
 checkRule([LineNum, or(X, _), orint1(A)], Proof) :-
-    LineNum > A,
+    checkLines(LineNum, A),
     member([A, X, _], Proof).
 
 % Or introduction 2, orint2
 checkRule([LineNum, or(_, Y), orint2(B)], Proof) :-
-    LineNum > B,
+    checkLines(LineNum, B),
     member([B, Y, _], Proof).
 
 % Implication introduction, impint
