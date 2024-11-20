@@ -4,7 +4,7 @@ verify(InputFileName) :-
     see(InputFileName),
     read(Prems), read(Goal), read(Proof),
     seen,
-    valid_proof(Prems, Goal, Proof).
+    validProof(Prems, Goal, Proof).
 
 validProof(Prems, Goal, Proof) :-
     last(Proof, Goal),
