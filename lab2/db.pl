@@ -10,12 +10,11 @@ validProof(Prems, Goal, Proof) :-
     last(Proof, Goal),
     checkSteps(Prems, Goal, Proof, Proof).
 
-% Base step for 
+% Base step
 checkSteps(_, _, [], _).
 
 % Recursively go through every row of the proof from top to bottom and check what Rule is used
 % and if it is correct.
-
 checkSteps(Prems, Goal, [Line|Rest], Proof) :-
     (checkPremise(Line, Prems) ;
     checkRule(Line, Proof) ;
@@ -23,6 +22,27 @@ checkSteps(Prems, Goal, [Line|Rest], Proof) :-
     checkSteps(Prems, Goal, Rest, Proof).
 
 
+% Check box
+newBox(Prems, [BoxStart|BoxTail], Proof) :-
+    BoxStart = [_ , _, assumption],
+    append([BoxStart|BoxTail], Proof, ProofWBox),
+    checkSteps(Prems, _, BoxTail, ProofWBox).
+
+
+% Traverse to last element and check if it is the same as Goal
+last([[_, Goal, Rule]], Goal) :-
+    Rule \= assumption.
+
+last([_|Rest], Goal) :-
+    last(Rest, Goal).
+
+%Traverse to last element and check if it has the correct ending according to rules
+boxLast([[RowB, VarY, _]], VarY, RowB).
+
+boxLast([_|T], VarY, RowB) :-
+    boxLast(T, VarY, RowB).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Premise rule, premise
 checkPremise([_, X, premise], Prems) :-
@@ -123,8 +143,8 @@ checkRule([LineNum, X, copy(A)], Proof) :-
 checkRule([_, or(X, neg(X)), lem],_).
 
 
-% Check so no rule calls for rows that are defined after the current row
 
+% Check so no rule calls for rows that are defined after the current row
 checkLines(Num, A) :-
     Num > A.
 checkLines(Num, A, B) :-
@@ -138,27 +158,5 @@ checkLines(Num, A, B, C, D, E) :-
     Num > E.
 
 
-% Check box
-
-newBox(Prems, [BoxStart|BoxTail], Proof) :-
-    BoxStart = [_ , _, assumption],
-    append([BoxStart|BoxTail], Proof, ProofWBox),
-    checkSteps(Prems, _, BoxTail, ProofWBox).
-
-
-% Traverse to last element and check if it is the same as Goal
-
-last([[_, Goal, Rule]], Goal) :-
-    Rule \= assumption.
-
-last([_|Rest], Goal) :-
-    last(Rest, Goal).
-
-
-% Base case for checking last row of box
-boxLast([[RowB, VarY, _]], VarY, RowB).
-
-boxLast([_|T], VarY, RowB) :-
-    boxLast(T, VarY, RowB).
 
 
