@@ -4,11 +4,12 @@ verify(InputFileName) :-
     see(InputFileName),
     read(Prems), read(Goal), read(Proof),
     seen,
-    validProof(Prems, Goal, Proof).
+    validProof(Prems, Goal, Proof),
+    write(Proof | '\n').
 
 validProof(Prems, Goal, Proof) :-
-    last(Proof, Goal),
-    checkSteps(Prems, Goal, Proof, Proof).
+    checkSteps(Prems, Goal, Proof, Proof),
+    last(Proof, Goal).
 
 % Base step
 checkSteps(_, _, [], _).

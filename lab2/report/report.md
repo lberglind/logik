@@ -15,21 +15,45 @@ $~~~~~~~~~~~~~~~~~~~~~~~~~~~$Ludwig Berglind, Simon Severinsson
 \pagebreak
 
 ## Beskrivning av algoritmen 
-Programmet öppnar och läser in en fil med bevis genom ett filnamn och sparar sedan de första tre raderna av beviset i tre olika variabler som benämns Prems (en lista av alla premisser), Goal (slutsatsen eller högerledet av sekventen) samt Proof (en lista med listor för hela beviset med alla rader och boxar).
-Dessa variabler tas sedan in som argument i validProof\3. Där kollas först att den sista raden i beviset är slutsatsen och att sista raden inte är ett antagande vilket görs genom att rekursivt traversera genom hela beviset.
-Sedan kallas predikatet checkSteps\4 där beviset faktiskt valideras. checkSteps\4 tar in premisserna, slutsatsen, hela beviset, samt hela beviset uppdelat i huvud och svans. Här valideras varje rad i beviset rekursivt genom att kolla om den är en premiss, en ny låda, eller om den stämmer in på någon av de andra reglerna. Svansen läggs sedan in i checkSteps\4 och basfallet nås när svansen är tom, dvs. när hela beviset har kollats igenom.
+Programmet börjar med att köra verify\1 som öppnar filen angiven i argumentet och läser sedan in
+bevisets premisser i variabeln Prems, målet i  variabeln Goal och själva beviset i sig i variabeln 
+Proof, som blir en lista av listor vars element är raderna i beviset. Dessa variabler tas sedan in 
+som argument i validProof\3. Där kollas först att den sista raden i beviset är slutsatsen och att 
+sista raden inte är ett antagande vilket görs genom att rekursivt traversera genom hela beviset.
+Sedan kallas predikatet checkSteps\4 där beviset faktiskt valideras. checkSteps\4 tar in premisserna, 
+slutsatsen, hela beviset, samt en lista där nuvarande raden är huvudet. Här valideras varje rad i 
+beviset rekursivt genom att kolla om den är en premiss, en ny låda, eller om den stämmer in på någon av 
+de andra reglerna. Svansen läggs sedan in i checkSteps\4 och basfallet nås när svansen är tom, dvs. när 
+hela beviset har kollats igenom.
 
-För att kolla om en rad är en premiss används predikatet checkPrems\2 som tar in en rad från beviset och en listan med alla premisser. Sedan används det inbyggda member\2-predikatet för att se till att formeln i raden faktiskt är en premiss.
+För att kolla om en rad är en premiss används predikatet checkPremise\2 som tar in en rad från beviset 
+och Prems, som ju innehåller premisserna. Sedan används det inbyggda member\2-predikatet för att se till 
+att formeln i raden faktiskt är del av Prems.
 
-För alla andra regler används predikatet checkRule\2 som tar in en rad från beviset och en lista över alla rader i beviset. I samtliga checkRule-klausuler kontrolleras det att ingen regel använder sig av senare rader genom checkLines-predikaten. Sedan kollas det om raderna som hänvisas till i reglerna på varje rad finns med i beviset genom member\2-predikatet.
-Vissa regler använder sig av boxar. Genom att kolla om den specifika raden i en lista med wildcard-svans finns i beviset kan vi konstatera att den är början av en box. Samma lista med svans kan sedan också läggas in i boxLast\3-predikatet för att kontrollera att även den sista raden i boxen existerar. boxLast\3 traverserar rekursivt till sista elementet/raden i listan och kollar att radnummer och formel stämmer överens med regeln.
-LEM-regeln använder inte någon member-kontroll utan kollar endast att innehållet på raden är en eller relation mellan någon variabel och dess negation samt att lem-regeln används.
+För alla andra regler används predikatet checkRule\2 som tar in en rad från beviset och en lista över 
+alla rader i beviset. I samtliga checkRule-klausuler kontrolleras det att ingen regel använder sig av 
+senare rader genom checkLines-predikaten. Sedan kollas det om raderna som hänvisas till i reglerna på 
+varje rad finns med i beviset genom member\2-predikatet.
+Vissa regler använder sig av boxar. Genom att kolla om den specifika raden i en lista med wildcard-
+svans finns i beviset kan vi konstatera att den är början av en box. Samma lista med svans kan sedan 
+också läggas in i boxLast\3-predikatet för att kontrollera att även den sista raden i boxen existerar. 
+boxLast\3 traverserar rekursivt till sista elementet/raden i listan och kollar att radnummer och formel 
+stämmer överens med regeln. LEM-regeln använder inte någon member-kontroll utan kollar endast att 
+innehållet på raden är en eller-relation mellan någon variabel och dess negation samt att lem-regeln 
+används.
 
-När hela beviset rekursivt har traverserats uppifrån och ner nås basfallet och programmet backtrackar hela vägen till validProof\3.
+När hela beviset rekursivt har traverserats uppifrån och ner nås basfallet och programmet backtrackar 
+hela vägen till validProof\3.
 
 Boxhanteringen:
 
-Boxar hanteras genom predikatet newBox\3 som kollar att första raden i boxen är ett antagande och sedan kallas predikatet checkSteps med boxens svans ([_|T]) och en lista med hela beviset, där alla rader som inte är boxar lätt kan läsas genom member\2-predikatet, som appendats med boxens rader. Boxens rader valideras sedan en i taget rekursivt tills dess att svansen tar slut och man backtrackas ut ur newBox-predikatet och kallar checkSteps med den vanliga bevislistan med rader utan boxar igen.
+Boxar hanteras genom predikatet newBox\3 som kollar att första raden i boxen är ett antagande och sedan 
+kallas predikatet checkSteps med boxens svans ([_|T]) som listan med rader som ska kontrolleras samt 
+boxens rader appendad till Proof som Proof, så att boxens innehåll kan åtkommas tills boxen stängs. 
+Inuti boxen kör programmet alltså på som vanligt och verifierar rader fram tills listan med boxens 
+innehåll är slut och checkSteps når basfallet. Då backtrackar programmet till den punkt där newBox 
+kallades från i checkSteps, och kallar som vanligt checkSteps igen på nästa rad, som är den direkt 
+efter boxen, och med vanliga Proof så som den var innan newBox.
 
 | Predikat  | Sant      | Falskt    |
 | --------- | --------- | --------- |
@@ -57,7 +81,7 @@ Boxar hanteras genom predikatet newBox\3 som kollar att första raden i boxen ä
 
 \pagebreak
 
-### Appendix A - code
+### Appendix A - Kod
 
 ```
 % Read input file, and check the proof

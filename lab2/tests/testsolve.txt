@@ -1,0 +1,32 @@
+[q, s, p].
+
+p.
+
+[
+	_,
+	_,
+	[3, p, copy(1)]
+].
+
+
+[s, imp(q, r), g].
+
+imp(or(p, q), or(p, r)).
+[
+	_,
+	[
+		[2, or(p, q), assumption],
+		[
+			[3, p, assumption],
+			[4, or(p, r), orint1(3)]
+		],
+		[
+			[5, q, assumption],
+			[6, r, impel(5, 1)],
+			[7, or(p, r), orint2(6)]
+		],
+		[8, or(p, r), orel(2,3,4,5,7)]
+	],
+	[9, imp(or(p, q), or(p, r)), impint(2, 8)]
+].
+
