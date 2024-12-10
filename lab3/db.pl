@@ -31,3 +31,13 @@ assertStates([Head | Tail]) :-
 
 assertState([Node | [State | Tail]]) :-
 	assertz(state(Node, State)). 
+
+ax(Node, Formula) :-
+	once(transition(Node, Next)),
+	stateContains(Next, Formula).
+
+stateContains(Node, Formula) :-
+	state(Node, L),
+	member(Formula, L).
+
+
