@@ -31,22 +31,34 @@ assertStates([Head | Tail]) :-
 assertState([Node | [State | Tail]]) :-
 	assertz(state(Node, State)). 
 
-ax(Node, Formula) :-
-	\+once(\+ax(Node, Formula)).
-axHelper(Node, Formula) :-
+ex(Node, Formula) :-
+	once(x(Node,Formula)).
+x(Node, Formula) :-
 	transition(Node, Next),
-	%call(stateContains
 	stateContains(Next, Formula).
 
-%ax_helper(Node, Formula) :-
-ex(Node, Formula) :-
-	once(ex_(Node,Formula)).
-exHelper(Node, Formula) :-
-	transition(Node, Next),
-	stateContains(Next, Formula).
+ax(Node, Formula) :-
+	\+once(\+x(Node, Formula)).
+%x(Node, Formula) :-
+%	transition(Node, Next),
+%	stateContains(Next, Formula).
+
+ef(Node, Formula) :-
+	once(f(Node, [], Formula)).
+
+af(Node, Formula) :-
+	\+once(\+f(Node, [], Formula)).
+f(Node, U, Formula) :-
+	write(Node), write("\n"),
+	\+member(Node, U),
+	stateContains(Node, Formula) ;
+	(transition(Node, Next), f(Next, [Node | U], Formula)).
+
+eg(Node, U, Formula) :- true.
 
 
 stateContains(Node, Formula) :-
 	state(Node, L),
+	write(L), write("\n"),
 	member(Formula, L).
 
