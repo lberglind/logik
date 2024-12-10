@@ -38,16 +38,18 @@ x(Node, Formula) :-
 	stateContains(Next, Formula).
 
 ax(Node, Formula) :-
-	\+once(\+x(Node, Formula)).
+	once(\+x(Node, Formula)).
 %x(Node, Formula) :-
 %	transition(Node, Next),
 %	stateContains(Next, Formula).
 
 ef(Node, Formula) :-
 	once(f(Node, [], Formula)).
+	%f(Node, [], Formula).
 
 af(Node, Formula) :-
-	\+once(\+f(Node, [], Formula)).
+	%	\+once(\+f(Node, [], Formula)).
+	once(\+f(Node, [], Formula)).
 f(Node, U, Formula) :-
 	write(Node), write("\n"),
 	\+member(Node, U),
