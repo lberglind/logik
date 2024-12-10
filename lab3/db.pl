@@ -4,40 +4,44 @@ check(InputFileName) :-
 	seen,
 	assertTransition(Adjacencies).
 	
-assertTransitions(_).
+assertTransitions([]).
 
 assertTransitions([Head | Tail]) :- 
-	write("Head: "), write(Head), write(", Tail: "), write(Tail), write("\n"),
+	%write("Head: "), write(Head), write(", Tail: "), write(Tail), write("\n"),
 	assertTransitionsHelper(Head),
 	assertTransitions(Tail).
 
 assertTransitionsHelper([Node | [To | _]]) :-
-	write("Node: "), write(Node), write("\n"),
-	write("To: "), write(To), write("\n"),
+	%write("Node: "), write(Node), write("\n"),
+	%write("To: "), write(To), write("\n"),
 	assertTransition(Node, To).
 
 assertTransition(_, _).
 assertTransition(Node, [Head | Tail]) :-
-	write("Assert Node: "), write(Node), write(", Head: "), write(Head), 
-	write("\n"),
+	%write("Assert Node: "), write(Node), write(", Head: "), write(Head), 
+	%write("\n"),
 	assertz(transition(Node, Head)),
 	assertTransition(Node, Tail).
 
-assertStates(_).
+assertStates([]).
 assertStates([Head | Tail]) :-
-	write(Head),
 	assertState(Head),
 	assertStates(Tail).
 
 assertState([Node | [State | Tail]]) :-
 	assertz(state(Node, State)). 
 
+axTest(Node, Formula) :-
+	ax(Node, Formula).
 ax(Node, Formula) :-
-	once(transition(Node, Next)),
+	transition(Node, Next),
+	%call(stateContains
 	stateContains(Next, Formula).
+
+%ax_helper(Node, Formula) :-
+
 
 stateContains(Node, Formula) :-
 	state(Node, L),
 	member(Formula, L).
-
 
