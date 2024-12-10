@@ -8,8 +8,8 @@ verify(InputFileName) :-
     write(Proof | '\n').
 
 validProof(Prems, Goal, Proof) :-
-    checkSteps(Prems, Goal, Proof, Proof),
-    last(Proof, Goal).
+    last(Proof, Goal),
+    checkSteps(Prems, Goal, Proof, Proof).
 
 % Base step
 checkSteps(_, _, [], _).
