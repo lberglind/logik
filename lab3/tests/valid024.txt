@@ -8,5 +8,6 @@
 
 s0.
 
+or(af(neg(r)),eg(neg(q))).
 ax(or(af(neg(r)),eg(neg(q)))).
 

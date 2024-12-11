@@ -30,9 +30,6 @@ assertStates([Head | Tail]) :-
 assertState([Node | [State | _]]) :-
 	assertz(state(Node, State)). 
 
-%checkAllPaths(State, [], Formula) :-
-%	findall(Next, transition(State, Next), L),
-%	checkAllPathsH(L, [], Formula).
 
 checkAllPaths(State, U, Formula) :-
 	findall(Next, transition(State, Next), L),
@@ -40,36 +37,26 @@ checkAllPaths(State, U, Formula) :-
 
 checkAllPathsH([], _, _).
 
-%checkAllPathsH([Head | Tail], [], Formula) :-
-%	check(Head, U, Formula),
-%	checkAllPathsH(Tail, [], Formula).
+checkAllPathsH([Head | Tail], [], Formula) :-
+	check(Head, [], Formula),
+	checkAllPathsH(Tail, [], Formula).
 
 checkAllPathsH([Head | Tail], U, Formula) :-
-	%write("a: "),write(Head), write(" | "), write(Tail), write(": "), write(Formula), write("\n"),
 	check(Head, U, Formula),
 	checkAllPathsH(Tail, [Head| U], Formula).
 
-%checkExistsPath(State, [], Formula) :-
-%	findall(Next, transition(State, Next), L),
-%	checkExistsPathH(L, [], Formula).
+checkExistsPath(State, [], Formula) :-
+	findall(Next, transition(State, Next), L),
+	checkExistsPathH(L, [], Formula).
 
 checkExistsPath(State, U, Formula) :-
-	%write("E From "), write(State), write(" to "), 
 	findall(Next, transition(State, Next), L),
-	%write(L), write("\n"),
 	checkExistsPathH(L, U, Formula).
 
 
 checkExistsPathH([], _, _) :- fail.
 
-%checkExistsPathH([Head | Tail], [], Formula) :-
-%	check(Head, U, Formula) ;
-%	checkExistsPathH(Tail, [], Formula).
-
 checkExistsPathH([Head | Tail], U, Formula) :-
-	state(Head, State),
-	%write("e: "), write(Head), write(" | "), write(Tail), write(": "), 
-	%write(Formula), write(", State: "), write(State), write("\n"),
 	check(Head, U, Formula) ;
 	checkExistsPathH(Tail, [Head | U], Formula).
 
@@ -79,7 +66,6 @@ check(State, _, Formula) :-
 
 % Neg
 check(State, _, neg(Formula)) :-
-	%write("neg: "), write(State), write(", neg("), write(Formula), write(")\n"),
 	\+ stateContains(State, Formula).
 
 % And
@@ -92,12 +78,10 @@ check(State, _, or(F, G)) :-
 
 % AX
 check(State, [], ax(Formula)) :-
-	%write("ax: "), write(State), write(", ax("), write(Formula), write(")\n"),
 	checkAllPaths(State, [], Formula).
 
 % EX
 check(State, _, ex(Formula)) :-
-	%write("ex: "), write(State), write(", ex("), write(Formula), write(")\n"),
 	checkExistsPath(State, [], Formula).
 
 % AG
