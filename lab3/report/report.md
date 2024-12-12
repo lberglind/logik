@@ -13,54 +13,84 @@
 $~~~~~~~~~~~~~~~~~~~~~~~~~~~$Ludwig Berglind, Simon Severinsson
 
 \pagebreak
+## Modelling
+A very basic, scaled-off web shop was chosen for the model design where a user can browse between products, add products to their cart, go to checkout, and completing a purchase.
 
-## Beskrivning av algoritmen 
+The model M has the following states:
+s0: Start (A customer lands on the website)
+s1: Browsing
+s2: Shopping cart
+s3: Checkout
+s4: Completed purchase
 
-Programmet börjar med att köra verify\1 som öppnar filen angiven i argumentet och läser sedan in
-bevisets premisser i variabeln Prems, målet i  variabeln Goal och själva beviset i sig i variabeln 
-Proof, som blir en lista av listor vars element är raderna i beviset. Dessa variabler tas sedan in 
-som argument i validProof\3. Där kollas först att den sista raden i beviset är slutsatsen och att 
-sista raden inte är ett antagande vilket görs genom att rekursivt traversera genom hela beviset.
-Sedan kallas predikatet checkSteps\4 där beviset faktiskt valideras. checkSteps\4 tar in premisserna, 
-slutsatsen, hela beviset, samt en lista där nuvarande raden är huvudet. Här valideras varje rad i 
-beviset rekursivt genom att kolla om den är en premiss, en ny låda, eller om den stämmer in på någon av 
-de andra reglerna. Svansen läggs sedan in i checkSteps\4 och basfallet nås när svansen är tom, dvs. när 
-hela beviset har kollats igenom.
+The model has the following transitions:
+s0 -> s1: Starting to browse
+s1 -> s2: Add product to cart
+s2 -> s1: Continue browsing
+s2 -> s3: Go to checkout
+s3 -> s4: Complete purchase
+s4 -> s0: Return to home page after finished purchase
 
-För att kolla om en rad är en premiss används predikatet checkPremise\2 som tar in en rad från beviset 
-och Prems, som ju innehåller premisserna. Sedan används det inbyggda member\2-predikatet för att se till 
-att formeln i raden faktiskt är del av Prems.
+The model consists of the following atoms:
 
-För alla andra regler används predikatet checkRule\2 som tar in en rad från beviset och en lista över 
-alla rader i beviset. I samtliga checkRule-klausuler kontrolleras det att ingen regel använder sig av 
-senare rader genom checkLines-predikaten. Sedan kollas det om raderna som hänvisas till i reglerna på 
-varje rad finns med i beviset genom member\2-predikatet.
-Vissa regler använder sig av boxar. Genom att kolla om den specifika raden i en lista med wildcard-
-svans finns i beviset kan vi konstatera att den är början av en box. Samma lista med svans kan sedan 
-också läggas in i boxLast\3-predikatet för att kontrollera att även den sista raden i boxen existerar. 
-boxLast\3 traverserar rekursivt till sista elementet/raden i listan och kollar att radnummer och formel 
-stämmer överens med regeln. LEM-regeln använder inte någon member-kontroll utan kollar endast att 
-innehållet på raden är en eller-relation mellan någon variabel och dess negation samt att lem-regeln 
-används.
+i: internet access
+c: credit card details
+p: Payment is processed
+l: Log in to the website
 
-När hela beviset rekursivt har traverserats uppifrån och ner nås basfallet och programmet backtrackar 
-hela vägen till validProof\3.
+[[s0, [s1]],
+ [s1, [s2]],
+ [s2, [s1, s3]],
+ [s3, [s4]],
+ [s4, [s0]]
+].
 
-Boxhanteringen:
+[[s0, [i]],
+ [s1, [i]],
+ [s2, [i,l]],
+ [s3, [i,l,c]],
+ [s4, [i,l,c, p]]
+].
 
-Boxar hanteras genom predikatet newBox\3 som kollar att första raden i boxen är ett antagande och sedan 
-kallas predikatet checkSteps med boxens svans ([_|T]) som listan med rader som ska kontrolleras samt 
-boxens rader appendad till Proof som Proof, så att boxens innehåll kan åtkommas tills boxen stängs. 
-Inuti boxen kör programmet alltså på som vanligt och verifierar rader fram tills listan med boxens 
-innehåll är slut och checkSteps når basfallet. Då backtrackar programmet till den punkt där newBox 
-kallades från i checkSteps, och kallar som vanligt checkSteps igen på nästa rad, som är den direkt 
-efter boxen, och med vanliga Proof så som den var innan newBox.
+s1.
 
+ag(ef(c)).
+
+[[s0, [s1]],
+ [s1, [s2]],
+ [s2, [s1, s3]],
+ [s3, [s4]],
+ [s4, [s0]]
+].
+
+[[s0, [i]],
+ [s1, [i]],
+ [s2, [i,l]],
+ [s3, [i,l,c]],
+ [s4, [i,l,c, p]]
+].
+
+s1.
+
+ef(and(neg(l), p)).
+
+
+The model simplifies a basic web shop to a sequence of steps a customer can partake in. Each state represents a stage in the purchasing process, and the transitions show possible ways to navigate between these stages.
+
+
+
+Specification:
+Valid: AG(s1 -> EF(card details)) If the system is in stage “Browsing”, there always exists one path (EF) where card details are necessary.
+
+Invalid: EF(¬logged in ^ payment is processed). There exists a path where a user is not logged in (¬logged in) and a payment is being processed at the same time.
+
+
+\pagebreak
+
+## Predicates
 | Predikat  | Sant      | Falskt    |
 | --------- | --------- | --------- |
-| assertTransitions\1 | 
-When all transitions have been asserted as facts | 
-If the formatting of the transitions is incorrect |
+| assertTransitions\1 | When all transitions have been asserted as facts | If the formatting of the transitions is incorrect |
 | | | |
 | assertTransitionsHelper\1 | When the transitions from one node have been asserted | If the formatting of the list is incorrect |
 | | | |
@@ -86,7 +116,7 @@ If the formatting of the transitions is incorrect |
 
 \pagebreak
 
-### Appendix A - Kod
+### Appendix A - Code
 
 ```
 verify(InputFileName) :-
