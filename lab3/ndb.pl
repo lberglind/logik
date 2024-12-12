@@ -84,7 +84,6 @@ check(State, U, ag(_)) :-
 	member(State, U).
 
 check(State, U, ag(Formula)) :-
-	\+ member(State, U),
 	check(State, [], Formula),
 	checkAllPaths(State, [State | U], ag(Formula)).
 
@@ -118,4 +117,3 @@ stateContains(Node, Formula) :-
 	member(Formula, L).
 
 abolishAll() :- abolish(transition/2), abolish(state/2).
-
