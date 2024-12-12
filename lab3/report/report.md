@@ -16,7 +16,7 @@ $~~~~~~~~~~~~~~~~~~~~~~~~~~~$Ludwig Berglind, Simon Severinsson
 ## Explanation of the proof-system
 The program is run through the verify\1 predicate which takes a filename as input. From this filename, every node's adjacencies and atoms are read, as well as the current state and the formula $\phi$ to check for in that state. The cut operator is used to reduce unnecessary backtracking and to provide a definitive True or False answer to the model checking query.
 
-assertTransitions\1 is then run on the Adjacencies to recursively go through the list and and assert every relationship between nodes as a predicate transition(node, next).
+assertTransitions\1 is then run on the Adjacencies to recursively go through the list and assert every relationship between nodes as a predicate transition(node, next).
 
 assertStates\1 recursively asserts every relationship between a node and its atoms as a predicate state(node, atom).
 
@@ -28,7 +28,7 @@ In case of a loop and visiting of a node for the second time, the check\3 predic
 
 The logic for checkExistsPath\3 is the same as for checkAllPaths\3 with the biggest difference being that if the helper function reaches its base case, it fails. This means that there are no more states to explore, and no path has been found that satisfies the given formula. This is crucial for the E (One or Exists) operators which require finding at least one path that satisfies the condition.
 
-AbolishALl\0 removes all stored relationships of transitions and states at the end of the proof.
+AbolishAll\0 removes all stored relationships of transitions and states at the end of the proof.
 
 
 
