@@ -5,11 +5,11 @@
 \
 \
 
-# $~~~~~~~~~~~~~~~~~$Beviskontroll med Prolog
+# $~~~~$CTL Proof-system implemented in Prolog
 
 ![alt](lumon.png "Title!");
 
-# $~~~~~~~~~~~~~~~~~~~~~~~$Grupp Lumon 
+# $~~~~~~~~~~~~~~~~~~~~~~~$Group Lumon 
 $~~~~~~~~~~~~~~~~~~~~~~~~~~~$Ludwig Berglind, Simon Severinsson
 
 \pagebreak
@@ -94,7 +94,7 @@ Invalid: EF(¬logged in ^ payment is processed). There exists a path where a use
 | | | |
 | assertTransitionsHelper\1 | When the transitions from one node have been asserted | If the formatting of the list is incorrect |
 | | | |
-| assertTransition\2 | When all transitions from a node have been asserted | Då beviset inte stämmer (validProof är false), eller inläsning av misslyckas |
+| assertTransition\2 | When all transitions from a node have been asserted | When the format of the transition is incorrect |
 | | | |
 | assertStates\1 | When all states have been asserted | If the formatting of the states is incorrect |
 | | | |
