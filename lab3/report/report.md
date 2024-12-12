@@ -13,6 +13,26 @@
 $~~~~~~~~~~~~~~~~~~~~~~~~~~~$Ludwig Berglind, Simon Severinsson
 
 \pagebreak
+## Explanation of the proof-system
+The program is run through the verify\1 predicate which takes a filename as input. From this filename, every node's adjacencies and atoms are read, as well as the current state and the formula $\phi$ to check for in that state. The cut operator is used to reduce unnecessary backtracking and to provide a definitive True or False answer to the model checking query.
+
+assertTransitions\1 is then run on the Adjacencies to recursively go through the list and and assert every relationship between nodes as a predicate transition(node, next).
+
+assertStates\1 recursively asserts every relationship between a node and its atoms as a predicate state(node, atom).
+
+The overloaded predicate check\3 recursively evaluates the CTL formula using the current state and any previously visited states to prevent infinite loops. Different instances cover different CTL formulas and house the specific logic for a formula.
+
+checkAllPaths\3 is used for CTL operators using A (All or always). All next states from a state are found using findall\3 and the resulting list is used as input for the helper function. Depending on the type of A CTL operator (X or (G or F)), different instances of the helper predicate is run to determine whether checking previous visited states is necessary. To prevent infinite loops, the current node is added to the list of visited node in the next recursion. 
+
+In case of a loop and visiting of a node for the second time, the check\3 predicate will check if the current state is a member of the list of previous visited states.
+
+The logic for checkExistsPath\3 is the same as for checkAllPaths\3 with the biggest difference being that if the helper function reaches its base case, it fails. This means that there are no more states to explore, and no path has been found that satisfies the given formula. This is crucial for the E (One or Exists) operators which require finding at least one path that satisfies the condition.
+
+AbolishALl\0 removes all stored relationships of transitions and states at the end of the proof.
+
+
+
+\pagebreak
 ## Modelling
 A very basic, scaled-off web shop was chosen for the model design where a user can browse between products, add products to their cart, go to checkout, and completing a purchase.
 

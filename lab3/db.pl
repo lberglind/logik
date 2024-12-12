@@ -85,9 +85,11 @@ check(State, _, ex(Formula)) :-
 	checkExistsPath(State, [], Formula).
 
 % AG
+% Base case: state already visited (to prevent infinite recursion)
 check(State, U, ag(_)) :-
 	member(State, U).
 
+% AG recursive case
 check(State, U, ag(Formula)) :-
 	\+ member(State, U),
 	check(State, [], Formula),
