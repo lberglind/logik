@@ -13,7 +13,7 @@
 $~~~~~~~~~~~~~~~~~~~~~~~~~~~$Ludwig Berglind, Simon Severinsson
 
 \pagebreak
-## Explanation of the proof-system
+## Method
 The program is run through the verify\1 predicate which takes a filename as input. From this filename, every node's adjacencies and atoms are read, as well as the current state and the formula $\phi$ to check for in that state. The cut operator is used to reduce unnecessary backtracking and to provide a definitive True or False answer to the model checking query.
 
 assertTransitions\1 is then run on the Adjacencies to recursively go through the list and assert every relationship between nodes as a predicate transition(node, next).
